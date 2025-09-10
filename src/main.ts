@@ -1,7 +1,7 @@
 import {vec2, vec3} from 'gl-matrix';
 // import * as Stats from 'stats-js';
 // import * as DAT from 'dat-gui';
-import Square from './geometry/Square';
+import Icosphere from './geometry/Icosphere';
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
@@ -14,12 +14,12 @@ const controls = {
   'Load Scene': loadScene, // A function pointer, essentially
 };
 
-let square: Square;
+let icosphere: Icosphere;
 let time: number = 0;
 
 function loadScene() {
-  square = new Square(vec3.fromValues(0, 0, 0));
-  square.create();
+  icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 2);
+  icosphere.create();
   // time = 0;
 }
 
@@ -48,7 +48,7 @@ function main() {
   // Add controls to the gui
   // const gui = new DAT.GUI();
 
-  // get canvas and webgl context
+  // Get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
   const gl = <WebGL2RenderingContext> canvas.getContext('webgl2');
   if (!gl) {
@@ -61,15 +61,16 @@ function main() {
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(0, 0, -10), vec3.fromValues(0, 0, 0));
+  // Set up camera position to view the 3D sphere
+  const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
-  renderer.setClearColor(164.0 / 255.0, 233.0 / 255.0, 1.0, 1);
+  renderer.setClearColor(0.2, 0.2, 0.2, 1); // Dark gray background
   gl.enable(gl.DEPTH_TEST);
 
-  const flat = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/flat-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
+  const lambert = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/lambert-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/lambert-frag.glsl')),
   ]);
 
   function processKeyPresses() {
@@ -83,8 +84,10 @@ function main() {
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
     processKeyPresses();
-    renderer.render(camera, flat, [
-      square,
+    
+    // Render the icosphere instead of square
+    renderer.render(camera, lambert, [
+      icosphere,
     ], time);
     time++;
     // stats.end();
@@ -97,13 +100,13 @@ function main() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.setAspectRatio(window.innerWidth / window.innerHeight);
     camera.updateProjectionMatrix();
-    flat.setDimensions(window.innerWidth, window.innerHeight);
+    lambert.setDimensions(window.innerWidth, window.innerHeight);
   }, false);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
   camera.updateProjectionMatrix();
-  flat.setDimensions(window.innerWidth, window.innerHeight);
+  lambert.setDimensions(window.innerWidth, window.innerHeight);
 
   // Start the render loop
   tick();

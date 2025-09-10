@@ -21,14 +21,23 @@ export class Shader {
 class ShaderProgram {
   prog: WebGLProgram;
 
+  // Attribute locations
   attrPos: number;
   attrNor: number;
+  attrCol: number;
 
+  // Uniform locations for flat shaders
   unifRef: WebGLUniformLocation;
   unifEye: WebGLUniformLocation;
   unifUp: WebGLUniformLocation;
   unifDimensions: WebGLUniformLocation;
   unifTime: WebGLUniformLocation;
+
+  // Uniform locations for Lambert shaders
+  unifModel: WebGLUniformLocation;
+  unifModelInvTr: WebGLUniformLocation;
+  unifViewProj: WebGLUniformLocation;
+  unifColor: WebGLUniformLocation;
 
   constructor(shaders: Array<Shader>) {
     this.prog = gl.createProgram();
@@ -41,12 +50,23 @@ class ShaderProgram {
       throw gl.getProgramInfoLog(this.prog);
     }
 
+    // Get attribute locations
     this.attrPos = gl.getAttribLocation(this.prog, "vs_Pos");
-    this.unifEye   = gl.getUniformLocation(this.prog, "u_Eye");
-    this.unifRef   = gl.getUniformLocation(this.prog, "u_Ref");
-    this.unifUp   = gl.getUniformLocation(this.prog, "u_Up");
-    this.unifDimensions   = gl.getUniformLocation(this.prog, "u_Dimensions");
-    this.unifTime   = gl.getUniformLocation(this.prog, "u_Time");
+    this.attrNor = gl.getAttribLocation(this.prog, "vs_Nor");
+    this.attrCol = gl.getAttribLocation(this.prog, "vs_Col");
+
+    // Get uniform locations for flat shaders
+    this.unifEye = gl.getUniformLocation(this.prog, "u_Eye");
+    this.unifRef = gl.getUniformLocation(this.prog, "u_Ref");
+    this.unifUp = gl.getUniformLocation(this.prog, "u_Up");
+    this.unifDimensions = gl.getUniformLocation(this.prog, "u_Dimensions");
+    this.unifTime = gl.getUniformLocation(this.prog, "u_Time");
+
+    // Get uniform locations for Lambert shaders
+    this.unifModel = gl.getUniformLocation(this.prog, "u_Model");
+    this.unifModelInvTr = gl.getUniformLocation(this.prog, "u_ModelInvTr");
+    this.unifViewProj = gl.getUniformLocation(this.prog, "u_ViewProj");
+    this.unifColor = gl.getUniformLocation(this.prog, "u_Color");
   }
 
   use() {
@@ -56,6 +76,7 @@ class ShaderProgram {
     }
   }
 
+  // For flat shaders
   setEyeRefUp(eye: vec3, ref: vec3, up: vec3) {
     this.use();
     if(this.unifEye !== -1) {
@@ -83,18 +104,57 @@ class ShaderProgram {
     }
   }
 
+  // For Lambert shaders
+  setModelMatrix(model: mat4) {
+    this.use();
+    if(this.unifModel !== -1) {
+      gl.uniformMatrix4fv(this.unifModel, false, model);
+    }
+  }
+
+  setModelInvTrMatrix(modelInvTr: mat4) {
+    this.use();
+    if(this.unifModelInvTr !== -1) {
+      gl.uniformMatrix4fv(this.unifModelInvTr, false, modelInvTr);
+    }
+  }
+
+  setViewProjMatrix(viewProj: mat4) {
+    this.use();
+    if(this.unifViewProj !== -1) {
+      gl.uniformMatrix4fv(this.unifViewProj, false, viewProj);
+    }
+  }
+
+  setGeometryColor(color: vec4) {
+    this.use();
+    if(this.unifColor !== -1) {
+      gl.uniform4fv(this.unifColor, color);
+    }
+  }
+
   draw(d: Drawable) {
     this.use();
 
+    // Bind position attribute
     if (this.attrPos != -1 && d.bindPos()) {
       gl.enableVertexAttribArray(this.attrPos);
       gl.vertexAttribPointer(this.attrPos, 4, gl.FLOAT, false, 0, 0);
     }
 
+    // Bind normal attribute if available
+    if (this.attrNor != -1 && d.bindNor()) {
+      gl.enableVertexAttribArray(this.attrNor);
+      gl.vertexAttribPointer(this.attrNor, 4, gl.FLOAT, false, 0, 0);
+    }
+
+    // Draw the geometry
     d.bindIdx();
     gl.drawElements(d.drawMode(), d.elemCount(), gl.UNSIGNED_INT, 0);
 
+    // Clean up
     if (this.attrPos != -1) gl.disableVertexAttribArray(this.attrPos);
+    if (this.attrNor != -1) gl.disableVertexAttribArray(this.attrNor);
   }
 };
 
