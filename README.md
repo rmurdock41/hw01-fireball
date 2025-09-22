@@ -4,7 +4,7 @@
 
 ## Demo
 
-**Live Demo**: [demo]([Project 0: Getting Started | CIS 566](https://rmurdock41.github.io/hw01-fireball/))
+**Live Demo**: [demo]([Project 1 | CIS 566](https://rmurdock41.github.io/hw01-fireball/))
 
 ## Overview
 
