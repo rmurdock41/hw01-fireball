@@ -2,9 +2,57 @@
 
 
 
+## Demo
 
+**Live Demo**: [demo]([Project 0: Getting Started | CIS 566](https://rmurdock41.github.io/hw01-fireball/))
 
+## Overview
 
+This project creates a stunning multi-layered fireball effect using WebGL shaders and procedural noise techniques. The fireball consists of four distinct color layers (red, orange, yellow, white) that blend together to create a realistic fire appearance, enhanced with a dynamic meteor background and bloom post-processing effects.
+
+## Features
+
+### Multi-Layer Fireball System
+
+- **Four Color Layers**: Red (inner), Orange, Yellow, and White (outer) layers
+- **Individual Layer Controls**: Each layer has independent settings for:
+  - Voronoi noise scaling
+  - Flame size/threshold
+  - Gradient strength
+  - Enable/disable toggle
+
+### Dynamic Background
+
+- **Meteor System**: Animated falling meteors with customizable:
+  - Count (10-100 meteors)
+  - Speed and size
+  - Brightness and lifetime
+  - Procedural positioning and animation
+
+### Additional Rendering Effects
+
+- **Bloom Post-Processing**: Multi-pass bloom effect with:
+  - Adjustable bloom strength
+  - Variable blur size
+  - Scene composition blending
+- **Alpha Blending**: Proper transparency handling for layered rendering
+
+### Vertex Shader Implementation
+
+- **Voronoi-based Deformation**: Surface displacement using multi-octave Voronoi noise
+- **Time-based Animation**: Continuous surface undulation and flame movement
+- **Scale-aware Transformation**: Per-layer scaling for proper depth ordering
+
+### Fragment Shader Innovation
+
+- **Advanced Voronoi Patterns**: Three-scale Voronoi combination with:
+  - Weighted cell generation for natural variation
+  - Seamless UV wrapping to eliminate texture seams
+  - Temporal animation offsets for dynamic flame motion
+- **Dual Gradient System**:
+  - Linear gradients for standard flame layers
+  - Bell-shaped gradients for white-hot core effects
+- **Sophisticated Blending**: Soft Light blending mode for realistic fire interaction
 
 
 
