@@ -6,6 +6,10 @@
 
 **Live Demo**: [demo]([Project 1 | CIS 566](https://rmurdock41.github.io/hw01-fireball/))
 
+
+
+![record.gif](img\record.gif)
+
 ## Overview
 
 This project creates a stunning multi-layered fireball effect using WebGL shaders and procedural noise techniques. The fireball consists of four distinct color layers (red, orange, yellow, white) that blend together to create a realistic fire appearance, enhanced with a dynamic meteor background and bloom post-processing effects.
