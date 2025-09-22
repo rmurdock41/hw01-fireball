@@ -8,7 +8,7 @@
 
 
 
-![record.gif](img\record.gif)
+![record.gif](img/record.gif)
 
 ## Overview
 
