@@ -49,9 +49,7 @@ class OpenGLRenderer {
     prog.setModelInvTrMatrix(modelInvTr);
     prog.setViewProjMatrix(viewProj);
 
-    // Set a default color for geometry
-    const defaultColor = vec4.fromValues(0.8, 0.3, 0.1, 1.0); // Orange color for fireball
-    prog.setGeometryColor(defaultColor);
+
 
     // Draw all drawables
     for (let drawable of drawables) {
